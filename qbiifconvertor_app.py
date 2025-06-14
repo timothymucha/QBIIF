@@ -1,3 +1,4 @@
+# streamlit_app.py
 import streamlit as st
 import pandas as pd
 import io
@@ -17,7 +18,7 @@ if uploaded_file:
     # Write headers
     writer.writerow(["!TRNS", "TRNSTYPE", "DATE", "ACCNT", "NAME", "AMOUNT", "DOCNUM", "MEMO"])
     writer.writerow(["!SPL", "TRNSTYPE", "DATE", "ACCNT", "NAME", "AMOUNT", "DOCNUM",
-                     "MEMO", "ITEM", "QNTY", "PRICE", "CLASS", "TAXABLE", "INVITEM"])
+                     "MEMO", "QNTY", "PRICE", "CLASS", "TAXABLE", "INVITEM"])
     writer.writerow(["!ENDTRNS"])
 
     for receipt_no, group in df.groupby('Receipt number'):
@@ -35,14 +36,13 @@ if uploaded_file:
                          f"{total:.2f}", docnum, ""])
 
         for _, row in group.iterrows():
-            item = row['Item']
             amount = float(row['Net sales'])
             qty = float(row.get('Quantity', 1))
             price = amount / qty if qty != 0 else amount
 
             writer.writerow(["SPL", "INVOICE", date, "Revenue:Confectionaries", customer,
-                             f"{-amount:.2f}", docnum, item, item, f"{qty:.2f}",
-                             f"{price:.2f}", "", "N", item])
+                             f"{-amount:.2f}", docnum, row['Item'], f"{qty:.2f}",
+                             f"{price:.2f}", "", "N", row['Item']])
 
         writer.writerow(["ENDTRNS"])
 
